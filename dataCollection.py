@@ -5,21 +5,13 @@ import yfinance as yf
 PERIOD = "5y"
 
 def collect(ticker: str) -> pd.DataFrame:
-	"""Fetch Open/Close/High/Low/Volume (OCHLV) for `ticker` for the last 5 years.
-	Args:
-		ticker: Stock ticker symbol (e.g. 'AAPL').
-	Returns:
-		pandas.DataFrame indexed by date with columns ['Open','Close','High','Low','Volume'].
-	Raises:
-		ValueError: If no data is returned or required columns are missing.
-	"""
 	end = datetime.date.today()
-	# approximate 5 years as 5*365 days
 	start = end - datetime.timedelta(days=5 * 365)
 
-	# Use yfinance to download historical data
 	data = yf.download(ticker, period=PERIOD)
-	print(data[0])
+
+	if isinstance(data.columns, pd.MultiIndex):
+		data.columns = data.columns.get_level_values(0)
 
 	if data is None or data.empty:
 		raise ValueError(f"No data returned for ticker: {ticker}")
