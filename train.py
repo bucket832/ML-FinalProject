@@ -6,6 +6,7 @@ from sklearn.metrics import mean_squared_error
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from dataCollection import collect
+from visualization import visualizePCA
 
 def add_technical_indicators(df):
 	df['SMA_50'] = df['Close'].rolling(window=50).mean()
