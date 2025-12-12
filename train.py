@@ -7,6 +7,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.layers import LSTM, Dense
 from dataCollection import collect
+from visualization import visualizePCA
 
 NUM_DATA_POINTS = 5 #OHLCV
 
@@ -45,11 +46,8 @@ if __name__ == "__main__":
 	close_max = scaler.data_max_[0]
 
 
-
-
 	time_step = 60
 	x_train, y_train = create_dataset(training_data_scaled, time_step)
-	print(x_train.shape, y_train.shape)
 
 	x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], NUM_DATA_POINTS))
 
@@ -74,9 +72,7 @@ if __name__ == "__main__":
 
 	model.fit(x_train, y_train, batch_size=1, epochs=1)
 
-	print(testing_data_scaled.shape)
 	x_test, y_test = create_dataset(testing_data_scaled, time_step)
-	print(x_test.shape, y_test.shape)
 	
 	# y_test_actual = dataset[training_data_len:, :]
 
@@ -84,6 +80,8 @@ if __name__ == "__main__":
 
 	predictions = model.predict(x_test)
 	predictions = predictions * (close_max - close_min) + close_min
+
+	visualizePCA(x_test.reshape(x_test.shape[0], -1), predictions)
 
 	train = df[:training_data_len+time_step]
 	valid = df[training_data_len+time_step:]
